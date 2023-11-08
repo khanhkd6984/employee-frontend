@@ -4,8 +4,9 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { FormControl, FormLabel } from "@mui/material";
+import { FormControl, FormLabel, hexToRgb } from "@mui/material";
 import { useState } from "react";
+// import { toast } from "react-toastify";
 
 const style = {
   position: "absolute" as "absolute",
@@ -30,8 +31,21 @@ export default function LoginModal(props: IProps) {
   const [password, setPassword] = useState("");
   //   const handleClose = () => setShowLoginModal(false);
   const handleLogin = () => {
-    console.log(`Email: ${email}, password: ${password}`);
-    setShowLoginModal(false);
+    let formData = new FormData();
+    formData.append("username", email);
+    formData.append("password", password);
+
+    fetch("http://localhost:8000/login", {
+      method: "POST",
+      body: formData,
+    }).then(async (res) => {
+      if (res.ok) {
+        console.log(await res.json());
+        setShowLoginModal(false);
+      } else {
+        console.log("NOT OK");
+      }
+    });
   };
 
   return (
