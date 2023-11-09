@@ -1,8 +1,9 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import AppNavbar from "@/components/app.navbar";
 import Sidebar from "@/components/app.sidebar";
-import "./globals.css";
+import AuthProvider from "@/app/context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,13 +20,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AppNavbar />
-        <div className="flex flex-row">
-          <div className="h-screen">
-            <Sidebar />
+        <AuthProvider>
+          <AppNavbar />
+          <div className="flex flex-row">
+            <div className="h-screen">
+              <Sidebar />
+            </div>
+            <div>{children}</div>
           </div>
-          <div>{children}</div>
-        </div>
+        </AuthProvider>
       </body>
     </html>
   );
