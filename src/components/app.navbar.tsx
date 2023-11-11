@@ -1,11 +1,10 @@
 "use client";
 import Link from "next/link";
 import { Navbar } from "flowbite-react";
-import { options } from "@/app/api/auth/[...nextauth]/options";
-import { getServerSession } from "next-auth";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function AppNavbar() {
-  // const session = getServerSession(options);
+  const session = useSession();
   return (
     <Navbar fluid rounded>
       <Navbar.Brand as={Link} href="https://flowbite-react.com">
@@ -20,13 +19,19 @@ export default function AppNavbar() {
       </Navbar.Brand>
       <Navbar.Toggle />
       <Navbar.Collapse>
-        <Navbar.Link href="#" active>
+        {/* <Link href="/" className="nav-link">
           Home
-        </Navbar.Link>
-        <Navbar.Link href="#">About</Navbar.Link>
-        <Navbar.Link href="#">Services</Navbar.Link>
-        <Navbar.Link href="#">Pricing</Navbar.Link>
-        {<Navbar.Link href="/api/auth/signout">Logout</Navbar.Link>}
+        </Link> */}
+        <Link href="/employee" className="nav-link">
+          Employee
+        </Link>
+        {session.data ? (
+          <button onClick={() => signOut()}>
+            {session?.data?.user_info?.name} (Sign out)
+          </button>
+        ) : (
+          <button onClick={() => signIn()}>Sign in</button>
+        )}
       </Navbar.Collapse>
     </Navbar>
   );

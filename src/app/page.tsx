@@ -1,7 +1,10 @@
+import { redirect } from "next/navigation";
+
 export default async function Home() {
-  return (
-    <>
-      <div>Hello</div>
-    </>
-  );
+  redirect("/employee");
+  // return (
+  //   <>
+  //     <div>Home</div>
+  //   </>
+  // );
 }

@@ -8,35 +8,37 @@ export const options: NextAuthOptions = {
       clientId: process.env.ZOHO_CLIENT_ID as string,
       clientSecret: process.env.ZOHO_CLIENT_SECRET as string,
     }),
-
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: {
-          label: "Email address",
-          type: "text",
-          placeholder: "Your email",
-        },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        const formData = new FormData();
-        formData.append("username", credentials?.username as string);
-        formData.append("password", credentials?.password as string);
-
-        const res = await fetch(process.env.LOGIN_URL as string, {
-          method: "POST",
-          body: formData,
-        });
-        const user = await res.json();
-
-        if (res.ok && user) {
-          //   console.log(user);
-          return user;
-        }
-        return null;
-      },
-    }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log("signIn", user, account, profile, email, credentials);
+      if (account?.provider === "zoho") {
+        // console.log("account", account);
+        user.accessToken = account.access_token;
+        user.tokenType = account.token_type;
+        return true;
+      }
+      return false;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token = {
+          accessToken: user.accessToken,
+          tokenType: user.tokenType,
+          user: {
+            name: user.name,
+            email: user.email,
+          },
+        };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user_info = token.user;
+      session.accessToken = token.accessToken;
+      session.tokenType = token.tokenType;
+      return session;
+    },
+  },
 };
